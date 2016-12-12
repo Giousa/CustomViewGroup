@@ -3,8 +3,10 @@ package com.giou.customviewgroup.view;
 import android.content.Context;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 /**
@@ -16,7 +18,10 @@ import android.widget.FrameLayout;
 
 public class DragLayout extends FrameLayout {
 
+    private final String TAG = DragLayout.class.getSimpleName();
     private ViewDragHelper mViewDragHelper;
+    private ViewGroup mLeftMenu;//左侧单
+    private ViewGroup mMainContent;//主内容
 
     /**
      * 代码
@@ -63,24 +68,28 @@ public class DragLayout extends FrameLayout {
 
         /**
          * 重写监听回调,返回值决定被拖拽的控件是否可以移动,若是false,就无法移动
-         * @param child
-         * @param pointerId
-         * @return
+         * @param child 被拖拽的子控件
+         * @param pointerId 多点触摸的手指id
+         * @return true可以滑动,false禁止滑动,我们可以获取所有子控件的View,然后判断当前是否可以滑动。
          */
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
+            Log.d(TAG,"child="+child.toString()+"    pointerId="+pointerId);
             return true;
         }
 
         /**
          * 返回值决定水平方向移动位置
-         * @param child
-         * @param left
-         * @param dx
+         * @param child 被拖拽的子控件
+         * @param left 移动到的位置
+         * @param dx 偏移量
          * @return
+         *
+         * 备注:默认是0,说明无法移动
          */
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
+            Log.d(TAG,"child="+child.toString()+"    left="+left+"    dx="+dx);
             return left;
         }
     };
@@ -120,5 +129,32 @@ public class DragLayout extends FrameLayout {
     public boolean onTouchEvent(MotionEvent event) {
         mViewDragHelper.processTouchEvent(event);
         return true;//消费事件
+    }
+
+    /**
+     *
+     * 查找所有控件
+     * 当View中所有的子控件均被映射成xml后触发
+     */
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        Log.d(TAG,"onFinishInflate"+getChildCount());
+
+        //容错性检查,健壮性检查,子View至少2个
+        if(getChildCount() < 2){
+            throw new IllegalStateException("子View少于2个!!");
+        }
+
+        //判断是否是ViewGroup的实现类
+
+        for (int i = 0; i < getChildCount(); i++) {
+            if(!(getChildAt(i) instanceof ViewGroup)){
+                throw  new IllegalStateException("第"+i+"个子View不是ViewGroup的实现类!");
+            }
+        }
+
+        mLeftMenu = (ViewGroup) getChildAt(0);
+        mMainContent = (ViewGroup) getChildAt(1);
     }
 }
