@@ -23,6 +23,8 @@ public class DragLayout extends FrameLayout {
     private ViewGroup mLeftMenu;//左侧单
     private ViewGroup mMainContent;//主内容
     private int mRange;
+    private int mMeasuredWidth;
+    private int mMeasuredHeight;
 
     /**
      * 代码
@@ -76,7 +78,8 @@ public class DragLayout extends FrameLayout {
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
 //            Log.d(TAG,"child="+child+"    pointerId="+pointerId);
-            return child == mMainContent;//当子View是主界面的时候,让它滑动
+//            return child == mMainContent;//当子View是主界面的时候,让它滑动
+            return true;//都可以滑动
         }
 
 
@@ -109,26 +112,47 @@ public class DragLayout extends FrameLayout {
         public int clampViewPositionHorizontal(View child, int left, int dx) {
             int oldLeft = child.getLeft();
 //            Log.d(TAG,"child="+child+"    left="+left+"    dx="+dx+"   newLeft="+oldLeft);
-            return fixLeft(child, left);
+
+            if(child == mMainContent){
+                return fixLeft(left);
+            }
+            return left;
         }
 
+        /**
+         * 控件移动后调用,可以处理动画、更新等
+         * 就算已经无法移动,依然会被调用,只是变化量为0而已
+         * @param changedView
+         * @param left
+         * @param top
+         * @param dx
+         * @param dy
+         */
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
+            Log.d(TAG,"onViewPositionChanged="+changedView+"  left="+left+"  top="+top);
             super.onViewPositionChanged(changedView, left, top, dx, dy);
+
+            if(changedView == mLeftMenu){
+                mLeftMenu.layout(0,0,0+mMeasuredWidth,0+mMeasuredHeight);
+                int newLeft = mMainContent.getLeft() + dx;
+                newLeft = fixLeft(newLeft);
+                mMainContent.layout(newLeft,0,newLeft+mMeasuredWidth,0+mMeasuredHeight);
+            }
+
         }
     };
 
 
 
 
-    private int fixLeft(View child, int left) {
-        if(child == mMainContent){
-            if(left < 0){
-                return 0;
-            }else if(left > mRange){
-                return mRange;
-            }
+    private int fixLeft(int left) {
+        if(left < 0){
+            return 0;
+        }else if(left > mRange){
+            return mRange;
         }
+
         return left;
     }
 
@@ -209,10 +233,10 @@ public class DragLayout extends FrameLayout {
         super.onSizeChanged(w, h, oldw, oldh);
 
         Log.d(TAG,"w="+w+"  h="+h+"  oledw="+oldw+"  oldh="+oldh);
-        int measuredWidth = getMeasuredWidth();
-        int measuredHeight = getMeasuredHeight();
-        mRange = (int) (measuredWidth * 0.6f);//这个值传给上面getViewHorizontalDragRange
-        Log.d(TAG,"measureWidth="+measuredWidth+"  measureHeight="+measuredHeight+"  range="+mRange);
+        mMeasuredWidth = getMeasuredWidth();
+        mMeasuredHeight = getMeasuredHeight();
+        mRange = (int) (mMeasuredWidth * 0.6f);//这个值传给上面getViewHorizontalDragRange
+        Log.d(TAG,"measureWidth="+ mMeasuredWidth +"  measureHeight="+ mMeasuredHeight +"  range="+mRange);
 
     }
 
