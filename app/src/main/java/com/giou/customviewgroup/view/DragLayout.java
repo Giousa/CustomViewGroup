@@ -86,10 +86,16 @@ public class DragLayout extends FrameLayout {
          * @return
          *
          * 备注:默认是0,说明无法移动
+         *      若是tryCaptureView方法中返回false,那么这里也不会被执行(禁止滑动,自然没有x偏移)
+         *
+         *      oldLeft = left - dx;
+         *      此时的left,即为下一次的oldLeft
+         *      xxxxxxxx
          */
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
-            Log.d(TAG,"child="+child+"    left="+left+"    dx="+dx);
+            int oldLeft = child.getLeft();
+            Log.d(TAG,"child="+child+"    left="+left+"    dx="+dx+"   newLeft="+oldLeft);
             return left;
         }
     };
