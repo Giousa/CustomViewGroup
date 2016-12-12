@@ -62,7 +62,7 @@ public class DragLayout extends FrameLayout {
 
 
         /**
-         * 重写监听回调,返回值决定被拖拽的控件是否可以移动
+         * 重写监听回调,返回值决定被拖拽的控件是否可以移动,若是false,就无法移动
          * @param child
          * @param pointerId
          * @return
