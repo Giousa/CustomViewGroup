@@ -74,8 +74,8 @@ public class DragLayout extends FrameLayout {
          */
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            Log.d(TAG,"child="+child.toString()+"    pointerId="+pointerId);
-            return true;
+            Log.d(TAG,"child="+child+"    pointerId="+pointerId);
+            return child == mMainContent;//当子View是主界面的时候,不让它滑动
         }
 
         /**
@@ -89,7 +89,7 @@ public class DragLayout extends FrameLayout {
          */
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
-            Log.d(TAG,"child="+child.toString()+"    left="+left+"    dx="+dx);
+            Log.d(TAG,"child="+child+"    left="+left+"    dx="+dx);
             return left;
         }
     };
@@ -156,5 +156,7 @@ public class DragLayout extends FrameLayout {
 
         mLeftMenu = (ViewGroup) getChildAt(0);
         mMainContent = (ViewGroup) getChildAt(1);
+        Log.d(TAG,"here mLeftMenu="+mLeftMenu);
+        Log.d(TAG,"here mMainContent="+mMainContent);
     }
 }
