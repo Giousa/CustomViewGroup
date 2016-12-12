@@ -87,14 +87,23 @@ public class DragLayout extends FrameLayout {
 
     /**
      *
+
      注意：
-     1.
-     在ViewGroup中onInterceptTouchEvent方法若反回false,那么触屏事件会继续向下传递，
-     但如果没有子View去处理这个事件，即子view的onTouchEvent没有返回True，
-     则最后还是由ViewGroup去处理这个事件，也就又执行了自己的onTouchEvent。
-     2.
-     onTouch调用前会自动调用onInterceptTouchEvent 如果onInterceptTouchEvent返回的false,
-     则不会调用onTouchEvent，若重写onInterceptTouchEvent让它在需要调用onTouchEvent时返回true
+
+     1.LLayout 中 onInterceptTouchEvent 默认返回值为false，onTouchEvent 默认返回值为false，所以只调用了ACTION_DOWN事件；
+     LView中 onTouchEvent 默认返回值为true；调用了ACTION_DOWN，ACTION_UP 两个事件；
+
+     2.LLayout中onInterceptTouchEvent返回了true，对触摸事件进行了拦截，所以没有将事件传递给View，
+     而直接执行了LLayout中的onTouchEvent事件；
+
+     3.把LLayout中onInterceptTouchEvent返回值改为false，再把LView中的onTouchEvent改为返回false:
+     只执行了ACTION_DOWN，然后就到LLayout中执行onTouchEvent事件了；
+
+     结论:
+     ViewGroup里的onInterceptTouchEvent默认值是false这样才能把事件传给View里的onTouchEvent.
+     ViewGroup里的onTouchEvent默认值是false,只执行一次touch事件。
+     View里的onTouchEvent返回默认值是true.这样才能执行多次touch事件。
+
      */
 
     /**
