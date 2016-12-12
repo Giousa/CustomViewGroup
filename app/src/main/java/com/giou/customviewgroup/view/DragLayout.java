@@ -74,8 +74,21 @@ public class DragLayout extends FrameLayout {
          */
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            Log.d(TAG,"child="+child+"    pointerId="+pointerId);
+//            Log.d(TAG,"child="+child+"    pointerId="+pointerId);
             return child == mMainContent;//当子View是主界面的时候,不让它滑动
+        }
+
+
+        /**
+         * 返回视图水平方向拖拽范围
+         * 主要针对子View上的控件,如:Button
+         * @param child
+         * @return 只有当返回值是0的时候,在子View上的控件无法滑动。
+         */
+        @Override
+        public int getViewHorizontalDragRange(View child) {
+            Log.d(TAG,"getViewHorizontalDragRange"+child);
+            return 10;
         }
 
         /**
@@ -95,8 +108,13 @@ public class DragLayout extends FrameLayout {
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
             int oldLeft = child.getLeft();
-            Log.d(TAG,"child="+child+"    left="+left+"    dx="+dx+"   newLeft="+oldLeft);
+//            Log.d(TAG,"child="+child+"    left="+left+"    dx="+dx+"   newLeft="+oldLeft);
             return left;
+        }
+
+        @Override
+        public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
+            super.onViewPositionChanged(changedView, left, top, dx, dy);
         }
     };
 
