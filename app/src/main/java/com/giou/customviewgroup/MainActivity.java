@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.giou.customviewgroup.model.Cheeses;
 import com.giou.customviewgroup.view.DragLayout;
 
+import java.util.Random;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements DragLayout.OnDrag
     ListView mLvMain;
     @InjectView(R.id.dl)
     DragLayout mDragLayout;
+    private Random mRandom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements DragLayout.OnDrag
 
 
     private void initView() {
+
+        mRandom = new Random();
+
         mLvLeft.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Cheeses.sCheeseStrings) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements DragLayout.OnDrag
     @Override
     public void onOpened() {
         Log.d(TAG,"setOnDragChangeListener  onOpened");
+        mLvLeft.smoothScrollToPosition(mRandom.nextInt(50));
 
     }
 
