@@ -1,6 +1,8 @@
 package com.giou.customviewgroup.view;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
@@ -141,6 +143,10 @@ public class DragLayout extends FrameLayout {
                 mMainContent.layout(newLeft,0,newLeft+mMeasuredWidth,0+mMeasuredHeight);
             }
 
+
+            dispathDragEvent();
+
+            invalidate();//兼容低版本
         }
 
         /**
@@ -165,7 +171,86 @@ public class DragLayout extends FrameLayout {
                 close();
             }
         }
+
+
+//        public static final int STATE_IDLE = 0;//空闲
+//        public static final int STATE_DRAGGING = 1;//拖拽
+//        public static final int STATE_SETTLING = 2;//动画设置
+        /**
+         * 拖拽状态改变时调用
+         * @param state
+         *
+         *
+         */
+        @Override
+        public void onViewDragStateChanged(int state) {
+            super.onViewDragStateChanged(state);
+            Log.d(TAG,"onViewDragStateChanged state="+state);
+        }
     };
+
+
+    protected void dispathDragEvent(){
+
+        //percent 范围:0-->1
+        float percent = mMainContent.getLeft()*1.0f / mRange;
+        Log.d(TAG,"percent="+percent);
+        //左侧面板  缩放 0.5——>1
+        mLeftMenu.setScaleX(0.5f + percent*0.5f);//X轴缩放一半
+        mLeftMenu.setScaleY(0.5f + percent*0.5f);//Y轴缩放一半
+
+        //左侧面板 移动
+        mLeftMenu.setTranslationX(-mMeasuredWidth*(1-percent)/2.0f);
+
+        //左侧面板 透明度 0.5-->1
+        mLeftMenu.setAlpha(percent+0.0f);
+
+        //主面板 缩放 1.0-->0.8
+        mMainContent.setScaleX(1.0f-percent * 0.2f);
+        mMainContent.setScaleY(1.0f-percent * 0.2f);
+
+        //背景亮度
+        getBackground().setColorFilter((Integer)evaluateColor(percent, Color.BLACK, Color.TRANSPARENT), PorterDuff.Mode.SRC_OVER);
+    }
+
+
+    /**
+     * 颜色类型估值器, 得到过渡色
+     * @param fraction
+     * @param startValue
+     * @param endValue
+     * @return
+     */
+    public Object evaluateColor(float fraction, Object startValue, Object endValue) {
+        int startInt = (Integer) startValue;
+        int startA = (startInt >> 24) & 0xff;
+        int startR = (startInt >> 16) & 0xff;
+        int startG = (startInt >> 8) & 0xff;
+        int startB = startInt & 0xff;
+
+        int endInt = (Integer) endValue;
+        int endA = (endInt >> 24) & 0xff;
+        int endR = (endInt >> 16) & 0xff;
+        int endG = (endInt >> 8) & 0xff;
+        int endB = endInt & 0xff;
+
+        return (int)((startA + (int)(fraction * (endA - startA))) << 24) |
+                (int)((startR + (int)(fraction * (endR - startR))) << 16) |
+                (int)((startG + (int)(fraction * (endG - startG))) << 8) |
+                (int)((startB + (int)(fraction * (endB - startB))));
+    }
+
+    /**
+     * 类型估值器
+     * @param fraction 分度值
+     * @param startValue 开始位置
+     * @param endValue 结束位置
+     * @return
+     */
+    public Float evaluate(float fraction, Number startValue, Number endValue) {
+        float startFloat = startValue.floatValue();
+        return startFloat + fraction * (endValue.floatValue() - startFloat);
+    }
 
     /**
      * 关闭
