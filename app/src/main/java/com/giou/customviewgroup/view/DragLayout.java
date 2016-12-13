@@ -229,6 +229,10 @@ public class DragLayout extends FrameLayout {
         float percent = mMainContent.getLeft() * 1.0f / mRange;
         Log.d(TAG, "percent=" + percent);
 
+        if(mOnDragChangeListener != null){
+            mOnDragChangeListener.onDraging(percent);
+        }
+
         //动画
         animationViews(percent);
 
