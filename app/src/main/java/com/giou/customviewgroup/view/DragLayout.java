@@ -1,6 +1,7 @@
 package com.giou.customviewgroup.view;
 
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -171,7 +172,8 @@ public class DragLayout extends FrameLayout {
      */
     private void close() {
         Log.d(TAG,"current state close");
-        mMainContent.layout(0,0,mMeasuredWidth,mMeasuredHeight);
+//        mMainContent.layout(0,0,mMeasuredWidth,mMeasuredHeight);
+        openSmooth(true,0);
     }
 
     /**
@@ -179,9 +181,47 @@ public class DragLayout extends FrameLayout {
      */
     private void open() {
         Log.d(TAG,"current state open");
-        mMainContent.layout(mRange,0,mRange+mMeasuredWidth,mMeasuredHeight);
+        openSmooth(true,mRange);
     }
 
+    /**
+     * 1.是否开启平滑动画
+     * @param isSmooth
+     * @param range
+     */
+    private void openSmooth(boolean isSmooth, int range) {
+        if(isSmooth){
+            if(mViewDragHelper.smoothSlideViewTo(mMainContent,range,0)){
+                //true 表示动画还没有结束,手动引发重绘
+                ViewCompat.postInvalidateOnAnimation(this);
+            }else{
+
+            }
+        }else{
+            mMainContent.layout(range,0,range+mMeasuredWidth,mMeasuredHeight);
+        }
+    }
+
+
+    /**
+     * 2.维持平滑动画的继续
+     *
+     * invalidate->onDraw->computeScroll->invalidate
+     *
+     */
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+        //判断当前是否移动到了指定位置,高频率的被调用
+        Log.d(TAG,"computeScroll");
+
+        if(mViewDragHelper.continueSettling(true)){
+            //true表示动画未结束,需要手动引发界面重绘
+            ViewCompat.postInvalidateOnAnimation(this);
+        }else{
+
+        }
+    }
 
     private int fixLeft(int left) {
         if(left < 0){
