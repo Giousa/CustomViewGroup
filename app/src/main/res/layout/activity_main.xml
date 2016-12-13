@@ -15,22 +15,51 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:background="#66ff0000"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="50dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="50dp"
+            android:paddingTop="50dp" >
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/head" />
+
+            <ListView
+                android:id="@+id/lv_left"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </ListView>
         </LinearLayout>
 
         <LinearLayout
-            android:background="#6600ff00"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:background="#FFFFFF"
+            android:orientation="vertical" >
 
-            <Button
-                android:text="按钮"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:background="#18B6EF" >
+
+                <ImageView
+                    android:id="@+id/iv_head"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:src="@drawable/head" />
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/lv_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </ListView>
         </LinearLayout>
 
     </com.giou.customviewgroup.view.DragLayout>
