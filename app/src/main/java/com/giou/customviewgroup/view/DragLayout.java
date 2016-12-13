@@ -90,7 +90,7 @@ public class DragLayout extends FrameLayout {
          */
         @Override
         public int getViewHorizontalDragRange(View child) {
-            Log.d(TAG,"getViewHorizontalDragRange"+child);
+            Log.d(TAG,"getViewHorizontalDragRange child="+child);
             return mRange;
         }
 
@@ -130,7 +130,7 @@ public class DragLayout extends FrameLayout {
          */
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
-            Log.d(TAG,"onViewPositionChanged="+changedView+"  left="+left+"  top="+top);
+            Log.d(TAG,"onViewPositionChanged child="+changedView+"  left="+left+"  top="+top);
             super.onViewPositionChanged(changedView, left, top, dx, dy);
 
             if(changedView == mLeftMenu){
@@ -141,9 +141,46 @@ public class DragLayout extends FrameLayout {
             }
 
         }
+
+        /**
+         *
+         * @param releasedChild
+         * @param xvel 水平方向松开的瞬间速度 + 向右  -向左
+         * @param yvel 垂直方向松开的瞬间速度
+         *
+         *             绝地值越大,速度值也就越大
+         *
+         *             当不动的时候,xvel=0
+         */
+        @Override
+        public void onViewReleased(View releasedChild, float xvel, float yvel) {
+            super.onViewReleased(releasedChild, xvel, yvel);
+            Log.d(TAG,"onViewReleased child="+releasedChild+"  xvel="+xvel+"   yvel="+yvel);
+            if(xvel == 0  &&  mMainContent.getLeft() > mRange * 0.5f){
+                open();
+            }else if(xvel > 0){
+                open();
+            }else{
+                close();
+            }
+        }
     };
 
+    /**
+     * 关闭
+     */
+    private void close() {
+        Log.d(TAG,"current state close");
+        mMainContent.layout(0,0,mMeasuredWidth,mMeasuredHeight);
+    }
 
+    /**
+     * 打开
+     */
+    private void open() {
+        Log.d(TAG,"current state open");
+        mMainContent.layout(mRange,0,mRange+mMeasuredWidth,mMeasuredHeight);
+    }
 
 
     private int fixLeft(int left) {
@@ -219,8 +256,8 @@ public class DragLayout extends FrameLayout {
 
         mLeftMenu = (ViewGroup) getChildAt(0);
         mMainContent = (ViewGroup) getChildAt(1);
-        Log.d(TAG,"here mLeftMenu="+mLeftMenu);
-        Log.d(TAG,"here mMainContent="+mMainContent);
+        Log.d(TAG,"here mLeftMenu child="+mLeftMenu);
+        Log.d(TAG,"here mMainContent child="+mMainContent);
     }
 
     @Override
