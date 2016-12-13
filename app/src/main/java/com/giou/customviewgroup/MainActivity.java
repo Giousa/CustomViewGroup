@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.giou.customviewgroup.model.Cheeses;
+import com.giou.customviewgroup.view.DragLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView mIvHead;
     @InjectView(R.id.lv_main)
     ListView mLvMain;
+    @InjectView(R.id.dl)
+    DragLayout mDragLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        mLvLeft.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Cheeses.sCheeseStrings){
+        mLvLeft.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Cheeses.sCheeseStrings) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                ((TextView)view).setTextColor(Color.WHITE);
+                ((TextView) view).setTextColor(Color.WHITE);
                 return view;
             }
         });

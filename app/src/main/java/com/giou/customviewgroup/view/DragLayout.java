@@ -28,6 +28,13 @@ public class DragLayout extends FrameLayout {
     private int mRange;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
+    private Status mStatus = Status.Closed;
+
+    public enum Status{
+        Opened,
+        Closed,
+        Draging;
+    }
 
     /**
      * 代码
@@ -190,11 +197,45 @@ public class DragLayout extends FrameLayout {
     };
 
 
-    protected void dispathDragEvent(){
+    /**
+     * 处理拖拽事件
+     */
+    protected void dispathDragEvent() {
 
         //percent 范围:0-->1
-        float percent = mMainContent.getLeft()*1.0f / mRange;
-        Log.d(TAG,"percent="+percent);
+        float percent = mMainContent.getLeft() * 1.0f / mRange;
+        Log.d(TAG, "percent=" + percent);
+
+        //动画
+        animationViews(percent);
+
+        //获取状态
+        mStatus = updateStatus(percent);
+
+        //执行监听
+    }
+
+    /**
+     * 获取最新状态
+     * @param percent
+     * @return
+     */
+    private Status updateStatus(float percent) {
+
+        if(percent == 0){
+            return Status.Closed;
+        }else if(percent == 1.0f){
+            return Status.Opened;
+        }
+
+        return Status.Draging;
+    }
+
+    /**
+     * 左侧面板,主面板,背景图片的动画改变
+     * @param percent
+     */
+    private void animationViews(float percent){
         //左侧面板  缩放 0.5——>1
         mLeftMenu.setScaleX(0.5f + percent*0.5f);//X轴缩放一半
         mLeftMenu.setScaleY(0.5f + percent*0.5f);//Y轴缩放一半
