@@ -36,6 +36,29 @@ public class DragLayout extends FrameLayout {
         Draging;
     }
 
+
+    /**
+     * 声明接口和方法
+     */
+    public interface OnDragChangeListener{
+        void onClosed();
+
+        void onOpened();
+
+        void onDraging(float percent);
+    }
+
+    //将接口对象传入当前类
+    private OnDragChangeListener mOnDragChangeListener;
+
+    public OnDragChangeListener getOnDragChangeListener() {
+        return mOnDragChangeListener;
+    }
+
+    public void setOnDragChangeListener(OnDragChangeListener onDragChangeListener) {
+        mOnDragChangeListener = onDragChangeListener;
+    }
+
     /**
      * 代码
      * @param context
@@ -209,10 +232,21 @@ public class DragLayout extends FrameLayout {
         //动画
         animationViews(percent);
 
+        Status lastStatus = mStatus;
+
         //获取状态
         mStatus = updateStatus(percent);
 
         //执行监听
+        if(lastStatus != mStatus  &&  mOnDragChangeListener != null){
+            if(mStatus == Status.Closed){
+                mOnDragChangeListener.onClosed();
+            }else if(mStatus == Status.Opened){
+                mOnDragChangeListener.onOpened();
+            }else{
+                mOnDragChangeListener.onDraging(percent);
+            }
+        }
     }
 
     /**

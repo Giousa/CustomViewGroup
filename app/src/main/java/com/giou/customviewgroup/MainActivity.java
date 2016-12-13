@@ -3,6 +3,7 @@ package com.giou.customviewgroup;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,7 +18,10 @@ import com.giou.customviewgroup.view.DragLayout;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DragLayout.OnDragChangeListener {
+
+
+    private final String TAG = MainActivity.class.getSimpleName();
 
     @InjectView(R.id.lv_left)
     ListView mLvLeft;
@@ -36,7 +40,10 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         initView();
+        initListener();
+
     }
+
 
     private void initView() {
         mLvLeft.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Cheeses.sCheeseStrings) {
@@ -49,6 +56,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mLvMain.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Cheeses.NAMES));
+
+    }
+
+
+    private void initListener() {
+        mDragLayout.setOnDragChangeListener(this);
+    }
+
+    @Override
+    public void onClosed() {
+        Log.d(TAG,"setOnDragChangeListener  onClosed");
+    }
+
+    @Override
+    public void onOpened() {
+        Log.d(TAG,"setOnDragChangeListener  onOpened");
+
+    }
+
+    @Override
+    public void onDraging(float percent) {
+        Log.d(TAG,"setOnDragChangeListener  onDraging  percent="+percent);
 
     }
 }
