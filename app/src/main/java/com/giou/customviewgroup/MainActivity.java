@@ -85,6 +85,6 @@ public class MainActivity extends AppCompatActivity implements DragLayout.OnDrag
     @Override
     public void onDraging(float percent) {
         Log.d(TAG,"setOnDragChangeListener  onDraging  percent="+percent);
-
+        mIvHead.setAlpha(1.0f-percent);
     }
 }
